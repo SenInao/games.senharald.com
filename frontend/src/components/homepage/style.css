@@ -1,0 +1,42 @@
+.Homepage {
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+
+  background-color: #050005;
+  color: var(--secondaryColor);
+
+  overflow: hidden;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+.menu {
+  font-size: 1.5rem;
+  margin-top: 10vh;
+  width: 100vw;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.games-container {
+  margin-top: 5vh;
+}
+
+.games-container button {
+  font-size: 1rem;
+  color: var(--secondaryColor);
+  background-color: #050005;
+
+  padding: 1.2rem;
+  margin: 2rem;
+
+  border: 1px solid var(--secondaryColor);
+  border-radius: 10px;
+}
