@@ -7,8 +7,8 @@ type Mouse = {
 const mouseRadius = 150
 const numberOfParticles = 400
 const defaultVel = 0.5
-var distanceBetweenParticles = window.innerWidth/20
-var maxParticleSize = window.innerWidth/100
+var distanceBetweenParticles = Math.max(window.innerWidth, window.innerHeight)/17
+var maxParticleSize = 1
 
 export default class Effect {
   mouse: Mouse
@@ -24,8 +24,8 @@ export default class Effect {
     this.height = canvas.height
     this.particles = []
 
-    this.context.strokeStyle = "white"
-    this.context.fillStyle = this.createGradient()
+    this.context.strokeStyle = "purple"
+    this.context.fillStyle = "orange"
 
     this.mouse = {
       x: -mouseRadius,
@@ -81,10 +81,9 @@ export default class Effect {
     this.canvas.height = window.innerHeight
     this.width = this.canvas.width
     this.height = this.canvas.height
-    this.context.fillStyle = this.createGradient()
-    this.context.strokeStyle = "white"
-    distanceBetweenParticles = window.innerWidth/20
-    maxParticleSize = window.innerWidth/100
+    this.context.fillStyle = "orange"
+    this.context.strokeStyle = "purple"
+    distanceBetweenParticles = Math.max(window.innerWidth, window.innerHeight)/17
   }
 
   connectParticles() {
@@ -184,8 +183,6 @@ class Particle {
   }
 
   reset() {
-    const diff = maxParticleSize/(window.innerWidth/100)
-    this.radius /=diff
     this.x = (this.x/this.effect.width) * window.innerWidth
     this.y = (this.y/this.effect.height) * window.innerHeight
   }
