@@ -3,21 +3,28 @@ const CONNECTED = 1
 const ERROR = 2
 const CLOSE = 3
 
+interface WsRequest {
+  id: number,
+  callBack: (packet:Packet) => any
+}
+
 interface Packet {
+  id: number
   action: String,
-  payload?: any
+  payload: any
 }
 
 class WS {
   url : string
   ws : WebSocket | undefined
   state : number
-  msgCallback : (packet:Packet) => any
+  pendingRequests : WsRequest[]
 
   constructor(url:string) {
     this.url = url
     this.state = CONNECTING
-    this.msgCallback = () => {}
+    this.pendingRequests = []
+
     this.connect()
   };
 
@@ -26,8 +33,7 @@ class WS {
 
     this.ws.onopen = () => {
       this.state = CONNECTED
-      const packet: Packet = {action: "register", payload: {username: "Sen"}}
-      this.send(packet)
+      this.send("register", {username: "Sen"})
     }
 
     this.ws.onerror = () => {
@@ -41,7 +47,7 @@ class WS {
     this.ws.onmessage = (msg) => {
       try {
         const packet: Packet= JSON.parse(msg.data)
-        this.msgCallback(packet)
+        this.resolvePacket(packet)
 
       } catch (error) {
         console.log(error)
@@ -50,8 +56,48 @@ class WS {
     }
   }
 
-  send(packet: Packet) {
+  resolvePacket(packet: Packet) {
+    for (let i = 0; i < this.pendingRequests.length; i++) {
+      if (packet.id === this.pendingRequests[i].id) {
+        this.pendingRequests[i].callBack(packet)
+        this.pendingRequests.splice(i, 0)
+        break
+      }
+    }
+  }
+
+  generateRequestId() {
+    let id = 0
+    while (true) {
+      for (let i = 0; i < this.pendingRequests.length; i++) {
+        if (id === this.pendingRequests[i].id) {
+          id+=1
+          continue
+        }
+      }
+      break
+    }
+
+    return id
+  }
+
+  send(action: string, payload: any, callBack: (packet: Packet) => any = () => {}) {
     if (this.ws) {
+      const id = this.generateRequestId()
+
+      const wsRequest: WsRequest = {
+        id: id,
+        callBack: callBack
+      }
+
+      this.pendingRequests.push(wsRequest)
+
+      const packet: Packet = {
+        id: id,
+        action: action,
+        payload: payload
+      }
+
       this.ws.send(JSON.stringify(packet))
     }
   }

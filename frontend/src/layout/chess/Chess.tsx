@@ -11,6 +11,11 @@ const Chess:React.FC = () => {
   }
 
   const {ws} = wsContext
+  
+  function matchmake(min: string) {
+    if (!ws) return
+    ws.send("chess-matchmake"+min, {}, () => (console.log("Added to matchmaking")))
+  }
 
   return (
     <div className="chess">
@@ -24,25 +29,31 @@ const Chess:React.FC = () => {
             <h1>Previous matches</h1>
             <li>
               <label>21/09/24</label>
+              <label>|</label>
               <label>You vs Tom</label>
+              <label>|</label>
               <label className="lost-label">Lost</label>
             </li>
             <li>
               <label>21/09/24</label>
+              <label>|</label>
               <label>You vs Tom</label>
+              <label>|</label>
               <label className="won-label">Won</label>
             </li>
             <li>
               <label>21/09/24</label>
+              <label>|</label>
               <label>You vs Tom</label>
+              <label>|</label>
               <label className="draw-label">Draw</label>
             </li>
           </ul>
         </section>
         <section className="matchmaking">
-          <button>Play 3 min</button>
-          <button>Play 5 min</button>
-          <button>Play 10 min</button>
+          <button onClick={() => matchmake("3min")}>Play 3 min</button>
+          <button onClick={() => matchmake("5min")}>Play 5 min</button>
+          <button onClick={() => matchmake("10min")}>Play 10 min</button>
         </section>
       </div>
     </div>

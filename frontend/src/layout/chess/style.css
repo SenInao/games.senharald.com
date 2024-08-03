@@ -28,7 +28,7 @@
 }
 
 .stats {
-  width: 30%;
+  width: 40%;
 }
 
 .stats ul {
@@ -41,10 +41,16 @@
   text-align: center;
 }
 
+.stats ul h1 {
+  padding: 10px;
+}
+
 .stats ul li {
   font-size: 1.2rem;
   margin: 1rem;
+  padding: 8px;
   list-style: none;
+  background-color: gray;
 
   display: flex;
   flex-direction: row;
@@ -60,7 +66,7 @@
 }
 
 .draw-label {
-  color: gray;
+  color: darkgray;
 }
 
 .matchmaking {
