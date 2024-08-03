@@ -11,8 +11,14 @@ const BackgroundParticles: React.FC = () => {
       canvasRef.current.width = window.innerWidth
       canvasRef.current.height = window.innerHeight
       if (context) {
-        const particleEffect = new ParticleEffect(context, canvasRef.current)
+        var particleEffect = new ParticleEffect(context, canvasRef.current)
         particleEffect.animate()
+      }
+    }
+
+    return () => {
+      if (particleEffect) {
+        particleEffect.stop()
       }
     }
   }, [])

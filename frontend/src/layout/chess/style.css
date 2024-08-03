@@ -4,21 +4,78 @@
 
   width: 100vw;
   height: 100vh;
+}
+
+.chess header{
+  height: 15vh;
+  font-size: 2rem;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.chess header h1 {
+  padding: 1.2rem;
+}
+
+.chess-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+
+  height: 85vh;
+}
+
+.stats {
+  width: 30%;
+}
+
+.stats ul {
+  height: 90%;
+  margin: 1.2rem;
+  padding: 10px;
+  color: var(--primaryColor);
+  background-color: var(--secondaryColor);
+  border-radius: 10px;
+  text-align: center;
+}
+
+.stats ul li {
+  font-size: 1.2rem;
+  margin: 1rem;
+  list-style: none;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.lost-label {
+  color: red;
+}
+
+.won-label {
+  color: green;
+}
+
+.draw-label {
+  color: gray;
+}
+
+.matchmaking {
+  width: 50%;
+  height: 100%;
 
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.chess h1 {
-  font-size: 3rem;
-  margin-top: 10vh;
-  margin-bottom: 10vh;
-}
-
 .chess button {
   font-size: 1.5rem;
   padding: 1.2rem;
+  margin: 1.2rem;
 
   border: 1px solid var(--secondaryColor);
   background-color: var(--primaryColor);

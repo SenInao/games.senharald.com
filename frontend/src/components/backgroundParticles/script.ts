@@ -16,6 +16,7 @@ export default class Effect {
   canvas: HTMLCanvasElement
   width; height: number
   particles: Particle[]
+  shouldRun: boolean
 
   constructor(context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     this.context = context
@@ -23,6 +24,7 @@ export default class Effect {
     this.width = canvas.width
     this.height = canvas.height
     this.particles = []
+    this.shouldRun = true
 
     this.context.strokeStyle = "purple"
     this.context.fillStyle = "orange"
@@ -117,9 +119,15 @@ export default class Effect {
   }
 
   animate() {
-    this.context.clearRect(0, 0, this.width, this.height)
-    this.handleParticles()
-    requestAnimationFrame(this.animate)
+    if (this.shouldRun) {
+      this.context.clearRect(0, 0, this.width, this.height)
+      this.handleParticles()
+      requestAnimationFrame(this.animate)
+    }
+  }
+
+  stop() {
+    this.shouldRun = false
   }
 }
 
