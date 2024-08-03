@@ -1,8 +1,16 @@
+import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
+import { WsContext } from "../../ws/WsContext"
 import "./style.css"
 
 const Chess:React.FC = () => {
   const navigate = useNavigate()
+  const wsContext = useContext(WsContext)
+  if (!wsContext) {
+    throw new Error("Context missing")
+  }
+
+  const {ws} = wsContext
 
   return (
     <div className="chess">
