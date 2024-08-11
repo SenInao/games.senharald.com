@@ -7,22 +7,25 @@ export default function handler(packet: Packet, ws: WebSocket, usersConnected: C
   try {
     let action = packet.action.split("-")
     if (action[0] === "register") {
-      usersConnected.push(register(packet, ws))
+      const connnection = register(packet, ws, usersConnected)
+      usersConnected.push(connnection)
 
       const returnPacket: Packet = {
         id: packet.id,
         action: packet.action,
-        payload: {status: true}
+        payload: {status: true, id: connnection.id}
       }
 
       ws.send(JSON.stringify(returnPacket))
 
     } else if (action[0] === "chess") {
-      packet.action = action.splice(0, 1).toString()
+      action.splice(0, 1)
+      packet.action = action.toString()
       chessHandler(packet, ws, usersConnected)
     }
 
-  } catch (error) {
+  } catch (error: any) {
+    console.log(error)
     const returnPacket: Packet = {
       id: packet.id,
       action: packet.action,
@@ -30,6 +33,5 @@ export default function handler(packet: Packet, ws: WebSocket, usersConnected: C
     }
 
     ws.send(JSON.stringify(returnPacket))
-    console.log(error)
   }
 }

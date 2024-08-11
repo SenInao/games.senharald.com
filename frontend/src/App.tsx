@@ -4,6 +4,7 @@ import Chess from "./layout/chess/Chess"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import "./App.css"
 import { WsContext } from "./ws/WsContext"
+import Game from "./layout/chess/Game"
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,10 @@ const router = createBrowserRouter([
   {
     path: "chess",
     element: <Chess/>
+  },
+  {
+    path: "chess/game",
+    element: <Game/>
   }
 ])
 

@@ -1,17 +1,26 @@
 import {WebSocketServer, WebSocket} from "ws"
 import handler from "./handlers/actionHandler"
+import removeConnection from "./utils/removeConnection"
 
 import dotenv from "dotenv"
-import removeConnection from "./utils/removeConnection"
+import Game from "./models/chess/Game"
 dotenv.config()
 
-export type Connection = {
-  id?: string
+interface chessInfo {
+  inGame : boolean
+  inQeue : boolean
+  game : Game | null
+}
+
+
+export interface Connection {
+  id: number
   ws: WebSocket
+  chess : chessInfo
 }
 
 export interface Packet {
-  id: string
+  id: number
   action: string
   payload: any
 }
@@ -25,7 +34,6 @@ console.log("Server running at ws//localhost:" + port)
 wss.on("connection", (ws) => {
   ws.on("message", (data) => {
     try {
-      console.log(usersConnected)
       const packet: Packet = JSON.parse(data.toString())
       handler(packet, ws, usersConnected)
     } catch (error) {

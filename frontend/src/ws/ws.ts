@@ -8,22 +8,28 @@ interface WsRequest {
   callBack: (packet:Packet) => any
 }
 
-interface Packet {
+export interface Packet {
   id: number
-  action: String,
+  action: String
   payload: any
 }
 
 class WS {
   url : string
   ws : WebSocket | undefined
+  id: number
   state : number
   pendingRequests : WsRequest[]
+  defaultHandler : (packet: Packet) => void
+  onOpenCall : () => void
 
   constructor(url:string) {
     this.url = url
     this.state = CONNECTING
     this.pendingRequests = []
+    this.defaultHandler = () => {}
+    this.id = -1
+    this.onOpenCall = () => {}
 
     this.connect()
   };
@@ -33,7 +39,8 @@ class WS {
 
     this.ws.onopen = () => {
       this.state = CONNECTED
-      this.send("register", {username: "Sen"})
+      this.send("register", {}, (packet:Packet) => {this.id = packet.payload.id})
+      this.onOpenCall()
     }
 
     this.ws.onerror = () => {
@@ -57,10 +64,13 @@ class WS {
   }
 
   resolvePacket(packet: Packet) {
+    if (packet.id === -1) {
+      this.defaultHandler(packet)
+    }
     for (let i = 0; i < this.pendingRequests.length; i++) {
       if (packet.id === this.pendingRequests[i].id) {
         this.pendingRequests[i].callBack(packet)
-        this.pendingRequests.splice(i, 0)
+        this.pendingRequests.splice(i, 1)
         break
       }
     }
