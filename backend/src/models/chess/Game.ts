@@ -16,7 +16,7 @@ export default class Game {
   player1: Player
   player2: Player
   board: (Piece | null)[][] = Array.from({length: 8}, () => Array(8).fill(null))
-  previousPos : (Piece | null)[][] = Array.from({length: 8}, () => Array(8).fill(null))
+  previousMoves : Move[]
   winner: number
   connections : Connection[]
 
@@ -31,7 +31,7 @@ export default class Game {
     player1.clock = gameDuration * 60
     player2.clock = gameDuration * 60
 
-    this.previousPos = cloneDeep(this.board)
+    this.previousMoves = []
 
     this.createPieces()
     this.updateLegalMoves()
@@ -189,7 +189,7 @@ export default class Game {
     const legalMove = this.getMove(piece, move.newPos)
     if (!legalMove) return
 
-    this.previousPos = cloneDeep(this.board)
+    this.previousMoves.push(move)
     this.doMove(piece, legalMove)
 
     this.player1.turn = !this.player1.turn
@@ -235,12 +235,14 @@ export default class Game {
     const player1 = {
       turn: this.player1.turn,
       id: this.player1.id,
+      username : this.player1.username,
       white: this.player1.white,
       clock: this.player1.clock
     }
     const player2 = {
       turn: this.player2.turn,
       id: this.player2.id,
+      username : this.player2.username,
       white: this.player2.white,
       clock: this.player2.clock
     }

@@ -3,11 +3,11 @@ import { Connection, Packet } from "../server";
 import register from "../controllers/register";
 import chessHandler from "./chessHandler";
 
-export default function handler(packet: Packet, ws: WebSocket, usersConnected: Connection[]) {
+export default async function handler(packet: Packet, ws: WebSocket, usersConnected: Connection[]) {
   try {
     let action = packet.action.split("-")
     if (action[0] === "register") {
-      const connnection = register(packet, ws, usersConnected)
+      const connnection = await register(packet, ws, usersConnected)
       usersConnected.push(connnection)
 
       const returnPacket: Packet = {

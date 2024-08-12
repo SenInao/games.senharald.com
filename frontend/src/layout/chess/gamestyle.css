@@ -9,16 +9,6 @@
   align-items: center;
 }
 
-.clock, .runningClock{
-  font-size: 2rem;
-  text-align: center;
-  padding: 1.5rem;
-}
-
-.runningClock {
-  background-color: var(--secondaryColor);
-  color: var(--primaryColor);
-}
 
 .ChessGame section {
   display: flex;
@@ -26,16 +16,37 @@
 
   align-items: center;
   justify-content: space-between;
+  width: 50%;
 }
 
-.ChessGame label {
+.clock, .runningClock{
+  font-size: 1.8rem;
+  text-align: center;
+  padding: 1.3rem;
+  width: 25%;
+}
+
+.runningClock {
+  background-color: var(--secondaryColor);
+  color: var(--primaryColor);
+}
+
+.name {
+  text-align: center;
+  font-size: 1.8rem;
+  width: 25%;
+}
+
+.ChessGame label{
   display: none;
-  font-size: 2rem;
-  margin-right: 20vw;
+  text-align: center;
+  font-size: 1.8rem;
+  width: 25%;
 }
 
 .back-button {
   display: none;
+  width: 25%;
 }
 
 .won-label {
@@ -44,4 +55,10 @@
 
 .lost-label{
   color: red;
+}
+
+@media (max-width: 780px) {
+  .ChessGame section {
+    width: 100%;
+  }
 }

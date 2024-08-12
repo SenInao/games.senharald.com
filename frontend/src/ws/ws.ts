@@ -22,13 +22,15 @@ class WS {
   pendingRequests : WsRequest[]
   defaultHandler : (packet: Packet) => void
   onOpenCall : () => void
+  userId : string | null
 
-  constructor(url:string) {
+  constructor(url:string, userId:string|null) {
     this.url = url
     this.state = CONNECTING
     this.pendingRequests = []
     this.defaultHandler = () => {}
     this.id = -1
+    this.userId = userId
     this.onOpenCall = () => {}
 
     this.connect()
@@ -39,7 +41,7 @@ class WS {
 
     this.ws.onopen = () => {
       this.state = CONNECTED
-      this.send("register", {}, (packet:Packet) => {this.id = packet.payload.id})
+      this.send("register", {userId:this.userId}, (packet:Packet) => {this.id = packet.payload.id})
       this.onOpenCall()
     }
 

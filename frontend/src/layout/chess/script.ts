@@ -17,6 +17,7 @@ interface Player {
   turn : boolean
   white : boolean
   id : number
+  username : string
   clock : number
 }
 

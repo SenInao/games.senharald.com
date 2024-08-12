@@ -1,5 +1,6 @@
 import { WebSocket } from "ws"
 import {Connection, Packet} from "./../server"
+import User from "../models/User/user"
 
 function generateId(connections: Connection[]) {
   var id = 1
@@ -15,10 +16,12 @@ function generateId(connections: Connection[]) {
   return id
 }
 
-export default function register(packet: Packet, ws: WebSocket, connections: Connection[]) {
+export default async function register(packet: Packet, ws: WebSocket, connections: Connection[]) {
   console.log(packet)
+  const user = await User.findById(packet.payload.userId)
   const connection: Connection = {
     id: generateId(connections),
+    user: user,
     ws: ws,
     chess : {
       inQeue : false,

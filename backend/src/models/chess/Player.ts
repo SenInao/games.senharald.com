@@ -5,6 +5,7 @@ import Game from "./Game"
 
 export default class Player {
   id: number
+  username : string
   white: boolean
   turn: boolean
   ws: WebSocket
@@ -17,6 +18,11 @@ export default class Player {
 
   constructor(connection: Connection, white: boolean) {
     this.id = connection.id
+    if (connection.user) {
+      this.username = connection.user.username
+    } else {
+      this.username = "Guest"
+    }
     this.ws = connection.ws
     this.white = white
     this.turn = white

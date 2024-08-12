@@ -48,39 +48,45 @@ const Chess:React.FC = () => {
         <h1>Chess</h1>
         <button onClick={() => navigate("/")}>Back</button>
       </header>
-      <div className="chess-content">
-        <section className="stats">
-          <ul>
-            <h1>Previous matches</h1>
-            <li>
-              <label>21/09/24</label>
-              <label>|</label>
-              <label>You vs Tom</label>
-              <label>|</label>
-              <label className="lost-label">Lost</label>
-            </li>
-            <li>
-              <label>21/09/24</label>
-              <label>|</label>
-              <label>You vs Tom</label>
-              <label>|</label>
-              <label className="won-label">Won</label>
-            </li>
-            <li>
-              <label>21/09/24</label>
-              <label>|</label>
-              <label>You vs Tom</label>
-              <label>|</label>
-              <label className="draw-label">Draw</label>
-            </li>
-          </ul>
-        </section>
-        <section className="matchmaking">
-          <button onClick={() => matchmake(3)}>Play 3 min</button>
-          <button onClick={() => matchmake(5)}>Play 5 min</button>
-          <button onClick={() => matchmake(10)}>Play 10 min</button>
-        </section>
+      {ws? (
+        <div className="chess-content">
+          <section className="stats">
+            <ul>
+              <h1>Previous matches</h1>
+              <li>
+                <label>21/09/24</label>
+                <label>|</label>
+                <label>You vs Tom</label>
+                <label>|</label>
+                <label className="lost-label">Lost</label>
+              </li>
+              <li>
+                <label>21/09/24</label>
+                <label>|</label>
+                <label>You vs Tom</label>
+                <label>|</label>
+                <label className="won-label">Won</label>
+              </li>
+              <li>
+                <label>21/09/24</label>
+                <label>|</label>
+                <label>You vs Tom</label>
+                <label>|</label>
+                <label className="draw-label">Draw</label>
+              </li>
+            </ul>
+          </section>
+          <section className="matchmaking">
+            <button onClick={() => matchmake(3)}>Play 3 min</button>
+            <button onClick={() => matchmake(5)}>Play 5 min</button>
+            <button onClick={() => matchmake(10)}>Play 10 min</button>
+          </section>
+        </div>
+      ) : (
+      <div className="loading-user">
+        <h1>Loading ...</h1>
       </div>
+      )}
     </div>
   )
 }

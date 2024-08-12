@@ -1,10 +1,13 @@
+import dotenv from "dotenv"
+dotenv.config()
+
 import {WebSocketServer, WebSocket} from "ws"
 import handler from "./handlers/actionHandler"
 import removeConnection from "./utils/removeConnection"
-
-import dotenv from "dotenv"
 import Game from "./models/chess/Game"
-dotenv.config()
+import dbConnect from "./config/db"
+
+dbConnect()
 
 interface chessInfo {
   inGame : boolean
@@ -12,9 +15,9 @@ interface chessInfo {
   game : Game | null
 }
 
-
 export interface Connection {
   id: number
+  user: any
   ws: WebSocket
   chess : chessInfo
 }

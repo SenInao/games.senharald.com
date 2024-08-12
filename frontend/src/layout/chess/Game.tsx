@@ -9,6 +9,8 @@ const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const clockRef = useRef<HTMLDivElement>(null)
   const oppClockRef = useRef<HTMLDivElement>(null)
+  const nameRef = useRef<HTMLDivElement>(null)
+  const oppNameRef = useRef<HTMLDivElement>(null)
   const gamestatus = useRef<HTMLLabelElement>(null)
   const backButton = useRef<HTMLButtonElement>(null)
 
@@ -23,9 +25,10 @@ const Game: React.FC = () => {
 
   function callback(packet: Packet) {
     if (packet.payload.status === false) {
-      navigate("/")
+      navigate("/chess")
       return
     }
+
     const gamestate = packet.payload
     setGamestate(gamestate)
     if (!canvasRef.current) return
@@ -36,7 +39,11 @@ const Game: React.FC = () => {
     if (!clockRef.current) return
     if (!oppClockRef.current) return
     if (!gamestatus.current) return
+    if (!oppNameRef.current) return
+    if (!nameRef.current) return
     const game = new GameClass(ws, gamestate, context, canvasRef.current, clockRef.current, oppClockRef.current)
+    oppNameRef.current.innerHTML = game.opponent.username
+    nameRef.current.innerHTML = game.player.username
     game.gamestatusRef = gamestatus.current
     game.endGameCall = gameEnd
   }
@@ -53,8 +60,10 @@ const Game: React.FC = () => {
 
 
   useEffect(() => {
-    if (gamestate) return
-    if (!ws) return
+    if (!ws) {
+      navigate("/chess")
+      return
+    }
     if (!ws.state) {
       ws.onOpenCall = () => {
         ws.send("chess-getGamestate", {}, callback)
@@ -74,13 +83,15 @@ const Game: React.FC = () => {
     <div className="ChessGame">
       <section>
         <label ref={gamestatus}>Won</label>
+        <div ref={oppNameRef} className="name"></div>
         <div ref={oppClockRef} className="runningClock">
           {formatTime(0)}
         </div>
       </section>
       <canvas ref={canvasRef}></canvas>
       <section>
-        <button ref={backButton} className={"back-button"} onClick={() => navigate("/")}>Back</button>
+        <button ref={backButton} className={"back-button"} onClick={() => navigate("/game")}>Back</button>
+        <div ref={nameRef} className="name"></div>
         <div ref={clockRef} className="clock">
           {formatTime(0)}
         </div>

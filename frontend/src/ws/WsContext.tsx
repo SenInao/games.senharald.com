@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useEffect, useState } from "react"
+import { getUser } from "../utils/getUser"
 import WS from "./ws"
 
 interface WsContextType {
@@ -16,8 +17,15 @@ const WsProvider: React.FC<WsProviderProps> = ({children}) => {
   const [ws, setWs] = useState<WS | null>(null)
 
   useEffect(() => {
-    const newWs = new WS("ws://localhost:80")
-    setWs(newWs)
+    getUser().then((user) => {
+      if (!user) {
+        const newWs = new WS("ws://localhost:81", null)
+        setWs(newWs)
+      } else {
+        const newWs = new WS("ws://localhost:81", user.id)
+        setWs(newWs)
+      }
+    })
 
     return ( ) => {
       if (ws) {
