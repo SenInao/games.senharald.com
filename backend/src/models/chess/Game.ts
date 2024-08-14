@@ -1,16 +1,13 @@
-import { Connection } from "../../server";
-import { Packet } from "../../server";
+import WS, { Packet } from "../../ws/ws";
 import posInList from "../../utils/chess/posInList";
 import Piece, { Bishop, King, Knight, Pawn, Pos, Queen, Rook } from "./Piece";
 import Player from "./Player";
 import cloneDeep from "lodash/cloneDeep"
-import indexByWs from "../../utils/indexByWs";
 
-interface Move {
+export interface Move {
   oldPos : Pos
   newPos : Pos
 }
-
 
 export default class Game {
   player1: Player
@@ -18,16 +15,17 @@ export default class Game {
   board: (Piece | null)[][] = Array.from({length: 8}, () => Array(8).fill(null))
   previousMoves : Move[]
   winner: number
-  connections : Connection[]
+  ws : WS
 
-  constructor(player1: Player, player2: Player, gameDuration : number, connections: Connection[]) {
-    this.connections = connections
+  constructor(player1: Player, player2: Player, gameDuration : number, ws: WS) {
+    this.ws = ws
     this.player1 = player1
     this.player2 = player2
     this.winner = 0
 
-    player1.inGame = true
-    player2.inGame = true
+    player1.connection.chess.inGame = true
+    player2.connection.chess.inGame = true
+
     player1.clock = gameDuration * 60
     player2.clock = gameDuration * 60
 
@@ -50,8 +48,8 @@ export default class Game {
       payload: message
     }
 
-    this.player1.ws.send(JSON.stringify(packet))
-    this.player2.ws.send(JSON.stringify(packet))
+    this.player1.connection.ws.send(JSON.stringify(packet))
+    this.player2.connection.ws.send(JSON.stringify(packet))
   }
 
   updateLegalMoves() {
@@ -108,7 +106,7 @@ export default class Game {
     const game = cloneDeep(this)
 
     var player : Player
-    if (game.player1.id === playerid) {
+    if (game.player1.connection.id === playerid) {
       player = game.player1
     } else {
       player = game.player2
@@ -139,7 +137,7 @@ export default class Game {
             oldPos : piece.pos,
             newPos : pos
           }
-          if (!this.simulateMove(move, player.id)) {
+          if (!this.simulateMove(move, player.connection.id)) {
             newLegalMoves.push(pos)
             checkMate = false
           }
@@ -207,7 +205,7 @@ export default class Game {
     opponent.inCheck = this.checkCheck(this.board, opponent.king)
 
     if (this.checkMate(opponent)) {
-      this.winner = player.id
+      this.winner = player.connection.id
       this.endGame()
     } else if (this.checkDraw(opponent)){
       this.winner = -1
@@ -225,7 +223,7 @@ export default class Game {
   }
 
   getPlayerById(id: number) {
-    if (id === this.player1.id) {
+    if (id === this.player1.connection.id) {
       return {player: this.player1, opponent: this.player2}
     }
     return {player: this.player2, opponent: this.player1}
@@ -234,14 +232,14 @@ export default class Game {
   gameState() {
     const player1 = {
       turn: this.player1.turn,
-      id: this.player1.id,
+      id: this.player1.connection.id,
       username : this.player1.username,
       white: this.player1.white,
       clock: this.player1.clock
     }
     const player2 = {
       turn: this.player2.turn,
-      id: this.player2.id,
+      id: this.player2.connection.id,
       username : this.player2.username,
       white: this.player2.white,
       clock: this.player2.clock
@@ -257,17 +255,47 @@ export default class Game {
   endGame() {
     this.player1.stopTimer()
     this.player2.stopTimer()
-    let i  = indexByWs(this.player1.ws, this.connections)
-    if (i !== -1) {
-      this.connections[i].chess.game = null
-      this.connections[i].chess.inGame = false
+
+    this.player1.connection.chess.game = null
+    this.player1.connection.chess.inGame = false
+    this.player2.connection.chess.game = null
+    this.player2.connection.chess.inGame = false
+
+    let winner
+    if (this.player1.winner) {
+      winner = this.player1.username
+    } else if (this.player2.winner) {
+      winner = this.player2.username
+    } else {
+      winner = "draw"
     }
-    i  = indexByWs(this.player2.ws, this.connections)
-    if (i !== -1) {
-      this.connections[i].chess.game = null
-      this.connections[i].chess.inGame = false
+
+    if (this.player1.connection.user) {
+      this.storeGame(this.player1.connection.user, winner)
     }
+    if (this.player2.connection.user) {
+      this.storeGame(this.player2.connection.user, winner)
+    }
+
     this.broadcastGamestate()
+  }
+
+  storeGame(user: any, winner: string) {
+    const game = {
+      moves: this.previousMoves,
+      winner: winner,
+      player1: this.player1.username,
+      player2: this.player2.username
+    }
+    user.previousGames.push(game)
+    user.save()
+  }
+
+  leaveGame(id: number) {
+    const {opponent} = this.getPlayerById(id)
+    opponent.winner = true
+    this.winner = opponent.connection.id
+    this.endGame()
   }
 
   createPieces() {

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState, useRef } from "react"
 import { Packet } from "../../ws/ws"
 import { WsContext } from "../../ws/WsContext"
-import {GameInterface, GameClass} from "./script"
+import {GameClass} from "./script"
 import "./gamestyle.css"
 import { useNavigate } from "react-router-dom"
 
@@ -14,7 +14,6 @@ const Game: React.FC = () => {
   const gamestatus = useRef<HTMLLabelElement>(null)
   const backButton = useRef<HTMLButtonElement>(null)
 
-  const [gamestate, setGamestate] = useState<GameInterface | null>(null)
   const wsContext = useContext(WsContext)
   const navigate = useNavigate()
   
@@ -30,7 +29,6 @@ const Game: React.FC = () => {
     }
 
     const gamestate = packet.payload
-    setGamestate(gamestate)
     if (!canvasRef.current) return
     const context = canvasRef.current.getContext("2d")
     if (!context) return
@@ -90,7 +88,7 @@ const Game: React.FC = () => {
       </section>
       <canvas ref={canvasRef}></canvas>
       <section>
-        <button ref={backButton} className={"back-button"} onClick={() => navigate("/game")}>Back</button>
+        <button ref={backButton} className={"back-button"} onClick={() => navigate("/chess")}>Back</button>
         <div ref={nameRef} className="name"></div>
         <div ref={clockRef} className="clock">
           {formatTime(0)}

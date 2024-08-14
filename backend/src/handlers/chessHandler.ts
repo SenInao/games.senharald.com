@@ -1,67 +1,52 @@
-import {Connection, Packet} from "./../server"
-import { threeMinQeue, fiveMinQeue, tenMinQeue, games} from "../states/chess/state"
-import { WebSocket } from "ws"
-import indexByWs from "../utils/indexByWs"
+import { threeMinQeue, fiveMinQeue, tenMinQeue } from "../states/chess/state"
 import matchmake from "../GameLogic/chess/matchmake"
 import { removeConnectionFromList } from "../utils/removeConnection"
+import WS, {Packet, Connection} from "../ws/ws"
 
-export default function chessHandler(packet: Packet, ws: WebSocket, usersConnected: Connection[]) {
-  const i = indexByWs(ws, usersConnected)
-
-  if (i === -1) {
-    throw new Error("connection not found")
-  }
-
-  var returnPacket: Packet | null = null
-
+export default function chessHandler(packet: Packet, connection: Connection, ws : WS) {
   if (packet.action === "matchmake") {
-    if (usersConnected[i].chess.inQeue || usersConnected[i].chess.inGame) {throw new Error("already in qeue")}
+    if (connection.chess.inQeue || connection.chess.inGame) {throw new Error("already in qeue")}
     if (packet.payload.min === 3) {
-      threeMinQeue.push(usersConnected[i])
+      threeMinQeue.push(connection)
     } else if (packet.payload.min === 5) {
-      fiveMinQeue.push(usersConnected[i])
+      fiveMinQeue.push(connection)
     } else if (packet.payload.min === 10) {
-      tenMinQeue.push(usersConnected[i])
+      tenMinQeue.push(connection)
     } else {
       throw new Error("minutes not defined")
     }
-    usersConnected[i].chess.inQeue = true
-    matchmake(usersConnected)
+    connection.chess.inQeue = true
+    matchmake(ws)
 
   } else if (packet.action === "matchmakeCancel") {
-    removeConnectionFromList(usersConnected[i].ws, threeMinQeue)
-    removeConnectionFromList(usersConnected[i].ws, fiveMinQeue)
-    removeConnectionFromList(usersConnected[i].ws, tenMinQeue)
-    usersConnected[i].chess.inQeue = false
+    removeConnectionFromList(connection.ws, threeMinQeue)
+    removeConnectionFromList(connection.ws, fiveMinQeue)
+    removeConnectionFromList(connection.ws, tenMinQeue)
+    connection.chess.inQeue = false
 
   } else if (packet.action === "getGamestate") {
-    if (!usersConnected[i].chess.game) {
+    if (!connection.chess.game) {
       throw new Error("not in game")
     }
-
-    const payload = usersConnected[i].chess.game?.gameState()
-
-    returnPacket = {
+    const payload = connection.chess.game?.gameState()
+    return {
       id: packet.id,
       action: "getGamestate",
       payload: payload
     }
 
   } else if (packet.action === "move") {
-    const game = usersConnected[i].chess.game
-    if (game !== null) {
-      game.validateChessMove(usersConnected[i].id, packet.payload)
-      game.broadcastGamestate()
+    const game = connection.chess.game
+    if (!game) {
+      throw new Error("not in game")
     }
+    game.validateChessMove(connection.id, packet.payload)
+    game.broadcastGamestate()
   }
 
-  if (!returnPacket) {
-    var returnPacket: Packet | null= {
-      id: packet.id,
-      action: packet.action,
-      payload: {status: true}
-    }
+  return {
+    id: packet.id,
+    action: packet.action,
+    payload: {status: true}
   }
-
-  ws.send(JSON.stringify(returnPacket))
 }

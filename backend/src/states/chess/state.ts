@@ -1,10 +1,7 @@
-import Game from "../../models/chess/Game";
-import { Connection } from "../../server";
+import { Connection } from "../../ws/ws"
 
 const threeMinQeue : Connection[] = []
 const fiveMinQeue : Connection[] = []
 const tenMinQeue : Connection[] = []
 
-const games : Game[] = []
-
-export {threeMinQeue, fiveMinQeue, tenMinQeue, games}
+export {threeMinQeue, fiveMinQeue, tenMinQeue}

@@ -1,5 +1,6 @@
 import { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import PreviousGameStat, { PreviousGameStatInterface } from "../../components/chess/PreviousGameStat"
 import { WsContext } from "../../ws/WsContext"
 import "./style.css"
 
@@ -12,7 +13,7 @@ const Chess:React.FC = () => {
     throw new Error("Context missing")
   }
 
-  const {ws} = wsContext
+  const {ws, user} = wsContext
   if (ws) {
     ws.defaultHandler = handler
   }
@@ -31,6 +32,18 @@ const Chess:React.FC = () => {
 
   function handler() {
     navigate("/chess/game")
+  }
+
+  function getPreviousGames() {
+    console.log(user)
+    if (!user) return []
+    if (!user.previousGames) return []
+    const gamesStats:PreviousGameStatInterface[] = []
+    user.previousGames.forEach((gamesStat: PreviousGameStatInterface) => {
+      gamesStats.push(gamesStat)
+    })
+
+    return gamesStats
   }
 
   if (matchmaking) {
@@ -53,27 +66,14 @@ const Chess:React.FC = () => {
           <section className="stats">
             <ul>
               <h1>Previous matches</h1>
-              <li>
-                <label>21/09/24</label>
-                <label>|</label>
-                <label>You vs Tom</label>
-                <label>|</label>
-                <label className="lost-label">Lost</label>
-              </li>
-              <li>
-                <label>21/09/24</label>
-                <label>|</label>
-                <label>You vs Tom</label>
-                <label>|</label>
-                <label className="won-label">Won</label>
-              </li>
-              <li>
-                <label>21/09/24</label>
-                <label>|</label>
-                <label>You vs Tom</label>
-                <label>|</label>
-                <label className="draw-label">Draw</label>
-              </li>
+              {user ? getPreviousGames().map((gameStat: PreviousGameStatInterface) => {
+                return <PreviousGameStat user={user} previousGameStat={gameStat}/>
+              }) : (
+                  <div>
+                    <button>Log In</button>
+                    <button>Register</button>
+                  </div>
+                )}
             </ul>
           </section>
           <section className="matchmaking">

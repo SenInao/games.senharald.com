@@ -40,6 +40,32 @@ const userSchema = new mongoose.Schema(
 				ref:"Chat",
 			}
 		],
+    previousGames: [
+      {
+        moves: [
+          {
+            x: Number,
+            y: Number,
+          }
+        ],
+        winner: {
+          type : String,
+          reqired: true
+        },
+        player1: {
+          type : String,
+          required : true
+        },
+        player2: {
+          type : String,
+          required : true
+        },
+        date: {
+          type : Date,
+          default: Date.now
+        }
+      }
+    ]
 	}
 );
 
