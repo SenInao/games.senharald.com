@@ -1,9 +1,16 @@
 import {useContext} from "react"
 import { User, WsContext } from "../../ws/WsContext"
 
-interface Move {
+interface Pos {
   x: number
   y: number
+  specialMove : string
+
+}
+
+interface Move {
+  oldPos: Pos,
+  newPos: Pos
 }
 
 export interface PreviousGameStatInterface {
@@ -17,9 +24,11 @@ export interface PreviousGameStatInterface {
 interface Props {
   previousGameStat : PreviousGameStatInterface
   user: User
+  setStatIndex : (i: number) => void
+  i : number
 }
 
-const PreviousGameStat : React.FC<Props> = ({previousGameStat, user}) => {
+const PreviousGameStat : React.FC<Props> = ({previousGameStat, user, setStatIndex, i}) => {
   const wsContext = useContext(WsContext)
   if (!wsContext) throw new Error("Context missing")
   let opp
@@ -38,7 +47,7 @@ const PreviousGameStat : React.FC<Props> = ({previousGameStat, user}) => {
   }
 
   return (
-    <li>
+    <li onClick={() => setStatIndex(i)}>
       <label>{previousGameStat.date.split("T")[0].replace("-", "/")}</label>
       <label>|</label>
       <label>you vs {opp}</label>

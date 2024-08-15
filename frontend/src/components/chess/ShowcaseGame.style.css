@@ -1,0 +1,24 @@
+.Showcase {
+  background-color: var(--primaryColor);
+  color: var(--secondaryColor);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.green-name {
+  color: green;
+}
+
+.red-name {
+  color: red;
+}
+
+.green-name, .red-name, .draw-name{
+  text-align: center;
+  font-size: 1.8rem;
+  width: 25%;
+}

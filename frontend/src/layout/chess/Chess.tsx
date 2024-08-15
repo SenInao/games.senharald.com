@@ -1,11 +1,13 @@
 import { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import PreviousGameStat, { PreviousGameStatInterface } from "../../components/chess/PreviousGameStat"
+import ShowcaseGame from "../../components/chess/ShowcaseGame"
 import { WsContext } from "../../ws/WsContext"
 import "./style.css"
 
 const Chess:React.FC = () => {
   const [matchmaking, setMatchmaking] = useState<boolean>(false)
+  const [statIndex, setStatIndex] = useState<number>(-1)
 
   const navigate = useNavigate()
   const wsContext = useContext(WsContext)
@@ -35,15 +37,24 @@ const Chess:React.FC = () => {
   }
 
   function getPreviousGames() {
-    console.log(user)
     if (!user) return []
     if (!user.previousGames) return []
-    const gamesStats:PreviousGameStatInterface[] = []
-    user.previousGames.forEach((gamesStat: PreviousGameStatInterface) => {
-      gamesStats.push(gamesStat)
-    })
+    return user.previousGames
+  }
 
-    return gamesStats
+  function getPreviousStat(gameStat: PreviousGameStatInterface) {
+    if (!user?.previousGames) return <div></div>
+    const i = user.previousGames.indexOf(gameStat)
+    return <PreviousGameStat key={i} user={user} previousGameStat={gameStat} setStatIndex={setStatIndex} i={i}/>
+  }
+
+  if (statIndex !== -1) {
+    if (user?.previousGames) {
+      const previousGame = user.previousGames[statIndex]
+      return (
+        <ShowcaseGame previousGameStat={previousGame} setStatIndex={setStatIndex} user={user}/>
+      )
+    }
   }
 
   if (matchmaking) {
@@ -67,7 +78,7 @@ const Chess:React.FC = () => {
             <ul>
               <h1>Previous matches</h1>
               {user ? getPreviousGames().map((gameStat: PreviousGameStatInterface) => {
-                return <PreviousGameStat user={user} previousGameStat={gameStat}/>
+                return getPreviousStat(gameStat)
               }) : (
                   <div>
                     <button>Log In</button>

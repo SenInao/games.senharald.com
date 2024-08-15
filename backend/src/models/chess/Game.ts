@@ -187,6 +187,7 @@ export default class Game {
     const legalMove = this.getMove(piece, move.newPos)
     if (!legalMove) return
 
+    move.newPos = legalMove
     this.previousMoves.push(move)
     this.doMove(piece, legalMove)
 

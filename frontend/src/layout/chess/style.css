@@ -73,6 +73,10 @@
   justify-content: space-evenly;
 }
 
+.stats ul li:hover {
+  transform: scale(1.05);
+}
+
 .lost-label {
   color: red;
 }
