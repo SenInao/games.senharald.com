@@ -2,7 +2,7 @@ import axios from "axios"
 
 export const getUser = async () => {
   try {
-    const response = await axios.get("http://localhost:80/api/user/", {
+    const response = await axios.get("http://senharald.com/api/user/", {
       withCredentials:true
     })
 

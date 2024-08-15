@@ -27,11 +27,11 @@ const WsProvider: React.FC<WsProviderProps> = ({children}) => {
   useEffect(() => {
     getUser().then((user) => {
       if (!user) {
-        const newWs = new WS("ws://localhost:81", null)
+        const newWs = new WS("ws://localhost:8082", null)
         setWs(newWs)
       } else {
         setUser(user)
-        const newWs = new WS("ws://localhost:81", user.id)
+        const newWs = new WS("ws://localhost:8082", user.id)
         setWs(newWs)
       }
     })

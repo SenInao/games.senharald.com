@@ -81,8 +81,8 @@ const Chess:React.FC = () => {
                 return getPreviousStat(gameStat)
               }) : (
                   <div>
-                    <button>Log In</button>
-                    <button>Register</button>
+                    <button onClick={() => {window.location.href = "http://senharald.com/login?redirect=games.senharald.com"}}>Log In</button>
+                    <button onClick={() => {window.location.href = "http://senharald.com/register?redirect=games.senharald.com"}}>Register</button>
                   </div>
                 )}
             </ul>
