@@ -1,6 +1,6 @@
 import { WebSocket, WebSocketServer } from "ws"
 import Game from "../models/chess/Game"
-import User from "../models/User/user"
+import User from "../models/user/User"
 import chessHandler from "../handlers/chessHandler"
 import { removeConnectionFromList } from "../utils/removeConnection"
 import { fiveMinQeue, tenMinQeue, threeMinQeue } from "../states/chess/state"
