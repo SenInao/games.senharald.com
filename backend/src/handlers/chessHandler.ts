@@ -3,7 +3,7 @@ import matchmake from "../GameLogic/chess/matchmake"
 import { removeConnectionFromList } from "../utils/removeConnection"
 import WS, {Packet, Connection} from "../ws/ws"
 
-export default function chessHandler(packet: Packet, connection: Connection, ws : WS) {
+export default async function chessHandler(packet: Packet, connection: Connection, ws : WS) {
   if (packet.action === "matchmake") {
     if (connection.chess.inQeue || connection.chess.inGame) {throw new Error("already in qeue")}
     if (packet.payload.min === 3) {

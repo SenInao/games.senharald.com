@@ -233,34 +233,38 @@ export class GameClass {
       this.setMousePosition(event)
       this.mouse.pressed = false
 
-      const piece = this.checkCollision(this.mouse.x, this.mouse.y)
+      const x = Math.floor(this.mouse.x/this.cellWidth)
+      const y = Math.floor(this.mouse.y/this.cellWidth)
 
-      if (!piece || piece.white !== this.player.white) {
-        const x = Math.floor(this.mouse.x/this.cellWidth)
-        const y = Math.floor(this.mouse.y/this.cellWidth)
-        var oldPos
-        var newPos
+      for (let i = 0; i < this.mouse.pieceToMove.legalMoves.length; i++) {
+        if (this.mouse.pieceToMove.legalMoves[i].x === x && this.mouse.pieceToMove.legalMoves[i].y === y) {
+          var oldPos
+          var newPos
 
-        if (!this.player.white) {
-          oldPos = {
-            x:this.reverseValue(this.mouse.pieceToMove.pos.x),
-            y:this.reverseValue(this.mouse.pieceToMove.pos.y)
+          if (!this.player.white) {
+            oldPos = {
+              x:this.reverseValue(this.mouse.pieceToMove.pos.x),
+              y:this.reverseValue(this.mouse.pieceToMove.pos.y)
+            }
+            newPos = {
+              x:this.reverseValue(x),
+              y:this.reverseValue(y),
+            }
+            this.mouse.pieceToMove.pos = {x: x, y:y}
+          } else  {
+            oldPos = this.mouse.pieceToMove.pos
+            newPos = {x:x,y:y}
+            this.mouse.pieceToMove.pos = newPos
           }
-          newPos = {
-            x:this.reverseValue(x),
-            y:this.reverseValue(y),
-          }
-          this.mouse.pieceToMove.pos = {x: x, y:y}
-        } else  {
-          oldPos = this.mouse.pieceToMove.pos
-          newPos = {x:x,y:y}
-          this.mouse.pieceToMove.pos = newPos
+
+          this.ws.send("chess-move", {oldPos: oldPos, newPos: newPos})
+
+          break
         }
-
-        this.ws.send("chess-move", {oldPos: oldPos, newPos: newPos})
       }
 
       this.mouse.pieceToMove = null
+      this.draw()
     })
 
     window.addEventListener("mousemove", (event) => {

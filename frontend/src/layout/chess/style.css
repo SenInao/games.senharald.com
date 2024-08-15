@@ -121,3 +121,18 @@ button:hover {
   background-color: var(--secondaryColor);
   color: var(--primaryColor);
 }
+
+@media (max-width: 780px) {
+  .chess-content {
+    flex-direction: column;
+  }
+
+  .stats {
+    width: 100%;
+    margin-bottom: 10%;
+  }
+
+  .matchmaking {
+    width: 100%;
+  }
+}

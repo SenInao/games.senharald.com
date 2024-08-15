@@ -82,7 +82,7 @@ export default class WS {
         if (!connection) {
           throw new Error("Not connected")
         }
-        return chessHandler(packet, connection, this)
+        return await chessHandler(packet, connection, this)
       }
     } catch (error: any) {
       console.log(error)
