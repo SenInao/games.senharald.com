@@ -44,8 +44,16 @@ const userSchema = new mongoose.Schema(
       {
         moves: [
           {
-            x: Number,
-            y: Number,
+            oldPos: {
+              x: Number,
+              y: Number,
+              specialMove : String
+            },
+            newPos: {
+              x: Number,
+              y: Number,
+              specialMove : String
+            }
           }
         ],
         winner: {
@@ -53,12 +61,24 @@ const userSchema = new mongoose.Schema(
           reqired: true
         },
         player1: {
-          type : String,
-          required : true
+          username : {
+            type : String,
+            required : true
+          },
+          white : {
+            type : Boolean,
+            required : true
+          }
         },
         player2: {
-          type : String,
-          required : true
+          username : {
+            type : String,
+            required : true
+          },
+          white : {
+            type : Boolean,
+            required : true
+          }
         },
         date: {
           type : Date,

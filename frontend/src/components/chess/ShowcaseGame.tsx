@@ -14,11 +14,10 @@ const ShowcaseGame:React.FC<Props> = ({previousGameStat, setStatIndex, user}) =>
   const canvasRef = useRef<HTMLCanvasElement>(null)
   var game : GameShowcase
   var opp
-  var winner
   var nameYou
   var nameOpp
 
-  if (previousGameStat.player1 === user.username) {
+  if (previousGameStat.player1.username === user.username) {
     opp = previousGameStat.player2
   } else {
     opp = previousGameStat.player1
@@ -27,7 +26,7 @@ const ShowcaseGame:React.FC<Props> = ({previousGameStat, setStatIndex, user}) =>
   if (previousGameStat.winner === "draw") {
     nameYou = "draw-name"
     nameOpp = "draw-name"
-  } else if (previousGameStat.winner === opp) {
+  } else if (previousGameStat.winner === opp.username) {
     nameYou = "red-name"
     nameOpp = "green-name"
   } else {
@@ -39,8 +38,15 @@ const ShowcaseGame:React.FC<Props> = ({previousGameStat, setStatIndex, user}) =>
     if (!canvasRef.current) return
     const context = canvasRef.current.getContext("2d")
     if (!context) return
+    let opp
+    if (previousGameStat.player1.username === user.username) {
+      opp = previousGameStat.player2
+    } else {
+      opp = previousGameStat.player1
+    }
+    const reverseBoard = opp.white
 
-    game = new GameShowcase(previousGameStat.moves, context, canvasRef.current, false)
+    game = new GameShowcase(previousGameStat.moves, context, canvasRef.current, reverseBoard)
   }, [])
 
   return (
@@ -48,7 +54,7 @@ const ShowcaseGame:React.FC<Props> = ({previousGameStat, setStatIndex, user}) =>
       <section>
         <div className={nameYou}>You</div>
         <div className="name">VS</div>
-        <div className={nameOpp}>{opp}</div>
+        <div className={nameOpp}>{opp.username}</div>
       </section>
       <canvas ref={canvasRef}></canvas>
       <section>

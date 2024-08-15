@@ -15,8 +15,8 @@ interface Move {
 
 export interface PreviousGameStatInterface {
   moves: Move[]
-  player1: string
-  player2: string
+  player1: {username: string, white: boolean}
+  player2: {username: string, white: boolean}
   winner: string
   date: string
 }
@@ -34,7 +34,7 @@ const PreviousGameStat : React.FC<Props> = ({previousGameStat, user, setStatInde
   let opp
   let label = "draw"
 
-  if (previousGameStat.player1 === user.username) {
+  if (previousGameStat.player1.username === user.username) {
     opp = previousGameStat.player2
   } else {
     opp = previousGameStat.player1
@@ -42,7 +42,7 @@ const PreviousGameStat : React.FC<Props> = ({previousGameStat, user, setStatInde
 
   if (previousGameStat.winner === user.username) {
     label = "won"
-  } else if (previousGameStat.winner === opp) {
+  } else if (previousGameStat.winner === opp.username) {
     label = "lost"
   }
 
@@ -50,7 +50,7 @@ const PreviousGameStat : React.FC<Props> = ({previousGameStat, user, setStatInde
     <li onClick={() => setStatIndex(i)}>
       <label>{previousGameStat.date.split("T")[0].replace("-", "/")}</label>
       <label>|</label>
-      <label>you vs {opp}</label>
+      <label>you vs {opp.username}</label>
       <label>|</label>
       <label className={label + "-label"}>{label}</label>
     </li>

@@ -207,6 +207,7 @@ export default class Game {
 
     if (this.checkMate(opponent)) {
       this.winner = player.connection.id
+      player.winner = true
       this.endGame()
     } else if (this.checkDraw(opponent)){
       this.winner = -1
@@ -272,21 +273,21 @@ export default class Game {
     }
 
     if (this.player1.connection.user) {
-      this.storeGame(this.player1.connection.user, winner)
+      this.storeGame(this.player1.connection.user, winner, this.player1, this.player2)
     }
     if (this.player2.connection.user) {
-      this.storeGame(this.player2.connection.user, winner)
+      this.storeGame(this.player2.connection.user, winner, this.player1, this.player2)
     }
 
     this.broadcastGamestate()
   }
 
-  storeGame(user: any, winner: string) {
+  storeGame(user: any, winner: string, p1 : Player, p2: Player) {
     const game = {
       moves: this.previousMoves,
       winner: winner,
-      player1: this.player1.username,
-      player2: this.player2.username
+      player1: {username:p1.username, white:p1.white},
+      player2: {username:p2.username, white:p2.white},
     }
     user.previousGames.push(game)
     user.save()
