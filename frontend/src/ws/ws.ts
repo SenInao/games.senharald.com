@@ -33,7 +33,11 @@ class WS {
     this.userId = userId
     this.onOpenCall = () => {}
 
-    this.connect()
+    try {
+      this.connect()
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   async connect() {
@@ -41,6 +45,7 @@ class WS {
 
     this.ws.onopen = () => {
       this.state = CONNECTED
+      console.log(this.userId)
       this.send("register", {userId:this.userId}, (packet:Packet) => {this.id = packet.payload.id})
       this.onOpenCall()
     }

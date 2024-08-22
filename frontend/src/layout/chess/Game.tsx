@@ -4,6 +4,7 @@ import { WsContext } from "../../ws/WsContext"
 import {GameClass} from "./script"
 import "./gamestyle.css"
 import { useNavigate } from "react-router-dom"
+import { getUser } from "../../utils/getUser"
 
 const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -17,6 +18,10 @@ const Game: React.FC = () => {
   const wsContext = useContext(WsContext)
   const navigate = useNavigate()
   
+  if (!wsContext) throw new Error("context missing")
+
+  const {ws, user, setUser} = wsContext
+
   function gameEnd() {
     if (!backButton.current) return
     backButton.current.style.display = "block"
@@ -56,6 +61,17 @@ const Game: React.FC = () => {
     return `${formattedMinutes}:${formattedSeconds}`;
   }
 
+  function back() {
+    if (user) {
+      getUser().then(user => {
+        if (user) {
+          setUser(user)
+        }
+      })
+    }
+    navigate("/chess")
+  }
+
 
   useEffect(() => {
     if (!ws) {
@@ -71,11 +87,6 @@ const Game: React.FC = () => {
     }
   }, [])
 
-  if (!wsContext) {
-    return <div></div>
-  }
-
-  const {ws} = wsContext
 
   return (
     <div className="ChessGame">
@@ -88,7 +99,7 @@ const Game: React.FC = () => {
       </section>
       <canvas ref={canvasRef}></canvas>
       <section>
-        <button ref={backButton} className={"back-button"} onClick={() => navigate("/chess")}>Back</button>
+        <button ref={backButton} className={"back-button"} onClick={() => back()}>Back</button>
         <div ref={nameRef} className="name"></div>
         <div ref={clockRef} className="clock">
           {formatTime(0)}

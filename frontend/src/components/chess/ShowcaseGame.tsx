@@ -58,8 +58,10 @@ const ShowcaseGame:React.FC<Props> = ({previousGameStat, setStatIndex, user}) =>
       </section>
       <canvas ref={canvasRef}></canvas>
       <section>
-        <button onClick={() => game.nextMove()}>{"<"}</button>
-        <button onClick={() => game.previousMove()}>{">"}</button>
+        <div>
+          <button onClick={() => game.nextMove()}>{"<"}</button>
+          <button onClick={() => game.previousMove()}>{">"}</button>
+        </div>
         <button onClick={() => setStatIndex(-1)}>Back</button>
       </section>
     </div>

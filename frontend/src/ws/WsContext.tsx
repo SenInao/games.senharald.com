@@ -7,6 +7,7 @@ interface WsContextType {
   ws: WS | null
   setWs: (ws:WS) => void
   user : User | null
+  setUser : (user: User) => void
 }
 
 export interface User {
@@ -26,12 +27,13 @@ const WsProvider: React.FC<WsProviderProps> = ({children}) => {
 
   useEffect(() => {
     getUser().then((user) => {
+      console.log(user)
       if (!user) {
         const newWs = new WS(`ws://${window.location.hostname}:8082`, null)
         setWs(newWs)
       } else {
         setUser(user)
-        const newWs = new WS(`ws://${window.location.host}:8082`, user.id)
+        const newWs = new WS(`ws://${window.location.hostname}:8082`, user._id)
         setWs(newWs)
       }
     })
@@ -46,7 +48,7 @@ const WsProvider: React.FC<WsProviderProps> = ({children}) => {
   }, [])
 
   return (
-    <WsContext.Provider value={{ws, setWs, user}}>
+    <WsContext.Provider value={{ws, setWs, user, setUser}}>
       {children}
     </WsContext.Provider>
   )
